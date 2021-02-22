@@ -23,14 +23,21 @@ public class ChestNoBlock extends JavaPlugin implements Listener {
         Block b = event.getBlockPlaced();
         
         if(event.getPlayer().isOp()){
+            // ops can place on chests
             return;
         }
         
-        if(!(b.getRelative(0, -1, 0).getBlockData() instanceof Chest)){
-            return;
+        if((isOpaque(b) && b.getRelative(0, -1, 0).getBlockData() instanceof Chest) || // stop opaque blocks from being placed on top
+           (b.getBlockData() instanceof Chest && isOpaque(b.getRelative(0, 1, 0)))){ // stop chests from being placed below opaque blocks
+            event.setBuild(true);
+            event.setCancelled(true);
         }
+    }
         
-        event.setBuild(true);
-        event.setCancelled(true);
+    // TODO: handle pistons
+    
+    private boolean isOpaque(Block block){
+        // TODO
+        return !(block.isEmpty() || block.isLiquid());
     }
 }
