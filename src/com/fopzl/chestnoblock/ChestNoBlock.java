@@ -1,5 +1,7 @@
 package com.fopzl.chestnoblock;
 
+import java.util.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +13,9 @@ import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Player;
+
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 
 public class ChestNoBlock extends JavaPlugin implements Listener {
     public void onEnable(){
@@ -29,12 +34,41 @@ public class ChestNoBlock extends JavaPlugin implements Listener {
         
         if((isOpaque(b) && b.getRelative(0, -1, 0).getBlockData() instanceof Chest) || // stop opaque blocks from being placed on top
            (b.getBlockData() instanceof Chest && isOpaque(b.getRelative(0, 1, 0)))){ // stop chests from being placed below opaque blocks
-            event.setBuild(true);
             event.setCancelled(true);
         }
     }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPistonExtend(BlockPistonExtendEvent event){
+        int modX = event.getDirection().getModX();
+        int modY = event.getDirection().getModY();
+        int modZ = event.getDirection().getModZ();
         
-    // TODO: handle pistons
+        List<Block> blocks = event.getBlocks();
+        
+        for(Block b : blocks){
+            if(isOpaque(b) && b.getRelative(modX, modY - 1, modZ).getBlockData() instanceof Chest){ // stop opaque blocks at new position from being on top
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockPistonRetract(BlockPistonRetractEvent event){
+        int modX = event.getDirection().getModX();
+        int modY = event.getDirection().getModY();
+        int modZ = event.getDirection().getModZ();
+        
+        List<Block> blocks = event.getBlocks();
+        
+        for(Block b : blocks){
+            if(isOpaque(b) && b.getRelative(modX, modY - 1, modZ).getBlockData() instanceof Chest){ // stop opaque blocks at new position from being on top
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
     
     private boolean isOpaque(Block block){
         // TODO

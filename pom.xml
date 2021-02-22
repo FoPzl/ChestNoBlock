@@ -4,7 +4,7 @@
 	<groupId>com.fopzl</groupId>
 	<name>ChestNoBlock</name>
 	<artifactId>${project.name}</artifactId>
-	<version>0.1</version>
+	<version>0.2</version>
 	<packaging>jar</packaging>
 	<description>Removes the player's ability to place blocks on top of chests.</description>
 	<scm>
